@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
+use Debugbar;
 use App\Http\Controllers\Controller;
 use App\Validators\RecipientValidator;
+use App\Validators\IssuerValidator;
 use App\Http\Requests\VerifiableDocumentRequest;
 
 use Illuminate\Http\Request;
@@ -14,17 +16,13 @@ class VerifiableDocumentController extends Controller
 {
     public function index()
     {
-        //  xdebug_info();
-        // info("=========Heree=========");
-        // dd($id);
-
         return response()->json([
             'status' => true,
             'posts' => "abc"
         ]);
     }
 
-    public function store(VerifiableDocumentRequest $request)
+    public function store(Request $request)
     {
         if ($request->hasFile('file')) {
             $file = $request->file('file');
@@ -35,26 +33,33 @@ class VerifiableDocumentController extends Controller
             if (is_null($decodedContent)) {
                 return response()->json([], 500);
             } else {
-                $validator = (new RecipientValidator())->validate($decodedContent);
+                $fieldsWithErrorMessagesArray = [];
+                $recipientValidator = new RecipientValidator();
+                $issuerValidator = new IssuerValidator();
 
-                if ($validator->fails()) {
-                    $fieldsWithErrorMessagesArray = $validator->messages()->get('*');
+                $validatedRecipient = $recipientValidator->validate($decodedContent);
+                $validatedIssuer = $issuerValidator->validate($decodedContent);
+
+                if ($validatedRecipient->fails()) {
+                    array_push($fieldsWithErrorMessagesArray, $validatedRecipient->messages()->get('*'));
+                    return response()->json([
+                        'status_code' => $recipientValidator->errorCode(),
+                        'errror' => $validatedIssuer->messages()->get('*')
+                    ]);
+
+                }
+                if ($validatedIssuer->fails()) {
+                    array_push($fieldsWithErrorMessagesArray, $validatedIssuer->messages()->get('*'));
 
                     return response()->json([
-                        'status' => true,
+                        'status_code' => $recipientValidator->errorCode(),
                         'errror' => $fieldsWithErrorMessagesArray
                     ]);
                 }
-
-                // $validated = $validator->validated();
             }
-
         } else {
             error_log("no file");
         }
-
         return response()->noContent();
-
     }
-
 }

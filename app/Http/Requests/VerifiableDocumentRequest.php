@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\File;
 
 class VerifiableDocumentRequest extends FormRequest
 {
@@ -14,7 +15,7 @@ class VerifiableDocumentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'file' => ['required', 'mimes:json']
+            'file' => ['required', File::types(['json']), 'mimes:json']
         ];
     }
 }
