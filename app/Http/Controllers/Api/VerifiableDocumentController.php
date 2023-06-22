@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Validators\SignatureValidator;
 use Debugbar;
 use App\Http\Controllers\Controller;
 use App\Validators\RecipientValidator;
@@ -28,31 +29,43 @@ class VerifiableDocumentController extends Controller
             $file = $request->file('file');
 
             $fileContent = $file->get();
-            $decodedContent = json_decode($fileContent, true)['data'];
+            $decodedContent = json_decode($fileContent, true);
 
             if (is_null($decodedContent)) {
                 return response()->json([], 500);
             } else {
                 $fieldsWithErrorMessagesArray = [];
+
                 $recipientValidator = new RecipientValidator();
                 $issuerValidator = new IssuerValidator();
+                $signatureValidator = new SignatureValidator();
 
-                $validatedRecipient = $recipientValidator->validate($decodedContent);
-                $validatedIssuer = $issuerValidator->validate($decodedContent);
-
+                $validatedRecipient = $recipientValidator->validate($decodedContent['data']);
                 if ($validatedRecipient->fails()) {
                     array_push($fieldsWithErrorMessagesArray, $validatedRecipient->messages()->get('*'));
                     return response()->json([
                         'status_code' => $recipientValidator->errorCode(),
-                        'errror' => $validatedIssuer->messages()->get('*')
+                        'errror' => $validatedRecipient->messages()->get('*')
                     ]);
 
                 }
+                $validatedIssuer = $issuerValidator->validate($decodedContent['data']);
+
                 if ($validatedIssuer->fails()) {
                     array_push($fieldsWithErrorMessagesArray, $validatedIssuer->messages()->get('*'));
 
                     return response()->json([
                         'status_code' => $recipientValidator->errorCode(),
+                        'errror' => $fieldsWithErrorMessagesArray
+                    ]);
+                }
+
+                $validatedSignature = $signatureValidator->validate($decodedContent);
+                if ($validatedSignature->fails()) {
+                    array_push($fieldsWithErrorMessagesArray, $validatedSignature->messages()->get('*'));
+
+                    return response()->json([
+                        'status_code' => $signatureValidator->errorCode(),
                         'errror' => $fieldsWithErrorMessagesArray
                     ]);
                 }
