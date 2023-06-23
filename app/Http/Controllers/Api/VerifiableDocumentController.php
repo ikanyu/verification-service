@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Validators\SignatureValidator;
+// use App\Validators\SignatureValidator;
 use Debugbar;
 use App\Http\Controllers\Controller;
-use App\Validators\RecipientValidator;
-use App\Validators\IssuerValidator;
+// use App\Validators\RecipientValidator;
+// use App\Validators\IssuerValidator;
 use App\Http\Requests\VerifiableDocumentRequest;
+use App\Services\DocumentService;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -23,7 +24,7 @@ class VerifiableDocumentController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(VerifiableDocumentRequest $request)
     {
         if ($request->hasFile('file')) {
             $file = $request->file('file');
@@ -34,45 +35,22 @@ class VerifiableDocumentController extends Controller
             if (is_null($decodedContent)) {
                 return response()->json([], 500);
             } else {
-                $fieldsWithErrorMessagesArray = [];
+                $documentService = new DocumentService($decodedContent);
+                $verifiedResult = $documentService->verify();
 
-                $recipientValidator = new RecipientValidator();
-                $issuerValidator = new IssuerValidator();
-                $signatureValidator = new SignatureValidator();
-
-                $validatedRecipient = $recipientValidator->validate($decodedContent['data']);
-                if ($validatedRecipient->fails()) {
-                    array_push($fieldsWithErrorMessagesArray, $validatedRecipient->messages()->get('*'));
+                if (($verifiedResult)) {
                     return response()->json([
-                        'status_code' => $recipientValidator->errorCode(),
-                        'errror' => $validatedRecipient->messages()->get('*')
+                        'status_code' => $verifiedResult['status_code'],
+                        'error' => $verifiedResult['error']
                     ]);
-
-                }
-                $validatedIssuer = $issuerValidator->validate($decodedContent['data']);
-
-                if ($validatedIssuer->fails()) {
-                    array_push($fieldsWithErrorMessagesArray, $validatedIssuer->messages()->get('*'));
-
+                } else {
                     return response()->json([
-                        'status_code' => $recipientValidator->errorCode(),
-                        'errror' => $fieldsWithErrorMessagesArray
-                    ]);
-                }
-
-                $validatedSignature = $signatureValidator->validate($decodedContent);
-                if ($validatedSignature->fails()) {
-                    array_push($fieldsWithErrorMessagesArray, $validatedSignature->messages()->get('*'));
-
-                    return response()->json([
-                        'status_code' => $signatureValidator->errorCode(),
-                        'errror' => $fieldsWithErrorMessagesArray
-                    ]);
+                        'message' => 'File is valid.'
+                    ], 201);
                 }
             }
         } else {
             error_log("no file");
         }
-        return response()->noContent();
     }
 }
