@@ -45,10 +45,5 @@ class SignatureRule implements ValidationRule
         if ($hashedFinalResult !== $this->signatureTargetHash) {
             $fail('The file does not have a valid signature.');
         }
-        // json_encode($array)
-        // hash('sha256', '{"id":"63c79bd9303530645d1cca00"}')
-
-
-        // $fail('The file does not have a valid identityProof key.');
     }
 }
