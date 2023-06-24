@@ -17,22 +17,28 @@ class IdentityProofRule implements ValidationRule
         $identityProofKey = $value["key"];
 
         if ($response->ok()) {
-            $answers = $response->json()["Answer"];
-            $validKey = false;
+            $jsonResponse = $response->json();
 
-            foreach ($answers as $answer) {
-                if (str_contains($answer["data"], $identityProofKey)) {
-                    $validKey = true;
-                    break;
+            if (array_key_exists("Answer", $jsonResponse)){
+                $answers = $jsonResponse["Answer"];
+                $validKey = false;
+
+                foreach ($answers as $answer) {
+                    if (str_contains($answer["data"], $identityProofKey)) {
+                        $validKey = true;
+                        break;
+                    }
                 }
-            }
 
-            if ($validKey == false) {
-                $fail('The file does not have a valid identityProof key.');
+                if ($validKey == false) {
+                    $fail('The file does not have a valid identityProof key.');
+                }
+            } else {
+                $fail('The file does not have a valid issuer');
             }
 
         } else {
-            $fail('The file does not have a valid issuer');
+            $fail('There is an issue with Google DNS.');
         }
     }
 }

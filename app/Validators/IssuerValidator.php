@@ -23,8 +23,8 @@ class IssuerValidator
   public function messages(): array
   {
     return [
-      'issuer.name.required_with' => 'The :attribute must be provided with recipient.identityProof',
-      'issuer.identityProof.required_with' => 'The :attribute must be provided with issuer.name',
+      'issuer.name.required_with' => 'The :attribute must be provided together with recipient.identityProof',
+      'issuer.identityProof.required_with' => 'The :attribute must be provided together with issuer.name',
     ];
   }
 

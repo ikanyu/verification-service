@@ -49,7 +49,7 @@ class DocumentServiceTest extends TestCase
     $this->assertEquals([], $service->verify());
   }
 
-  public function test_that_invalid_issuer_recipient_name_return_error(): void
+  public function test_that_missing_recipient_name_return_error(): void
   {
     $decodedContent = $this->decodedContent;
     unset($decodedContent['data']['recipient']['name']);
@@ -61,7 +61,7 @@ class DocumentServiceTest extends TestCase
     $this->assertEquals('invalid_recipient', $verifiedService['status_code']);
   }
 
-  public function test_that_invalid_issuer_recipient_email_return_error(): void
+  public function test_that_missing_recipient_email_return_error(): void
   {
     $decodedContent = $this->decodedContent;
     unset($decodedContent['data']['recipient']['email']);
@@ -71,5 +71,41 @@ class DocumentServiceTest extends TestCase
 
     $this->assertArrayHasKey('error', $verifiedService);
     $this->assertEquals('invalid_recipient', $verifiedService['status_code']);
+  }
+
+  public function test_that_missing_issuer_name_return_error(): void
+  {
+    $decodedContent = $this->decodedContent;
+    unset($decodedContent['data']['issuer']['name']);
+
+    $service = new DocumentService($decodedContent);
+    $verifiedService = $service->verify();
+
+    $this->assertArrayHasKey('error', $verifiedService);
+    $this->assertEquals('invalid_issuer', $verifiedService['status_code']);
+  }
+
+  public function test_that_missing_identity_proof_return_error(): void
+  {
+    $decodedContent = $this->decodedContent;
+    unset($decodedContent['data']['issuer']['identityProof']);
+
+    $service = new DocumentService($decodedContent);
+    $verifiedService = $service->verify();
+
+    $this->assertArrayHasKey('error', $verifiedService);
+    $this->assertEquals('invalid_issuer', $verifiedService['status_code']);
+  }
+
+  public function test_that_missing_target_hash_return_error(): void
+  {
+    $decodedContent = $this->decodedContent;
+    unset($decodedContent['signature']['targetHash']);
+
+    $service = new DocumentService($decodedContent);
+    $verifiedService = $service->verify();
+
+    $this->assertArrayHasKey('error', $verifiedService);
+    $this->assertEquals('invalid_signature', $verifiedService['status_code']);
   }
 }

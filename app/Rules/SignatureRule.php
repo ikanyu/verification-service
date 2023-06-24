@@ -11,12 +11,12 @@ use RecursiveIteratorIterator;
 class SignatureRule implements ValidationRule
 {
     private $data;
-    private $signatureTargetHash;
+    private $signature;
 
     public function __construct($decodedContent)
     {
         $this->data = $decodedContent["data"];
-        $this->signatureTargetHash = $decodedContent["signature"]["targetHash"];
+        $this->signature = $decodedContent["signature"];
     }
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
@@ -42,7 +42,7 @@ class SignatureRule implements ValidationRule
         sort($hashedResults);
         $hashedFinalResult = hash('sha256', json_encode($hashedResults));
 
-        if ($hashedFinalResult !== $this->signatureTargetHash) {
+        if ($hashedFinalResult !== $this->signature["targetHash"]) {
             $fail('The file does not have a valid signature.');
         }
     }

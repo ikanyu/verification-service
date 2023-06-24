@@ -18,14 +18,14 @@ class DocumentService
   }
   public function verify(): array
   {
-    $issuerValidationResponse = $this->validateIssuer();
-    if (!is_null($issuerValidationResponse)) {
-        return $issuerValidationResponse;
-    }
-
     $recipientValidationResponse = $this->validateRecipient();
     if (!is_null($recipientValidationResponse)) {
         return $recipientValidationResponse;
+    }
+
+    $issuerValidationResponse = $this->validateIssuer();
+    if (!is_null($issuerValidationResponse)) {
+        return $issuerValidationResponse;
     }
 
     $signatureValidationResponse = $this->validateSignature();
