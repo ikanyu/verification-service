@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 // use App\Validators\SignatureValidator;
+use App\Models\VerifiableDocument;
 use Debugbar;
 use App\Http\Controllers\Controller;
 // use App\Validators\RecipientValidator;
@@ -19,8 +20,7 @@ class VerifiableDocumentController extends Controller
     public function index()
     {
         return response()->json([
-            'status' => true,
-            'posts' => "abc"
+            'status' => 'Server is running!'
         ]);
     }
 
@@ -38,15 +38,25 @@ class VerifiableDocumentController extends Controller
                 $documentService = new DocumentService($decodedContent);
                 $verifiedResult = $documentService->verify();
 
+                // store result
+                $verifiableDocument = new VerifiableDocument;
+                $verifiableDocument->file_type = $request->file->extension();
+
                 if (($verifiedResult)) {
+                    $verifiableDocument->verified = 0;
+                    $verifiableDocument->save();
+
                     return response()->json([
                         'status_code' => $verifiedResult['status_code'],
                         'error' => $verifiedResult['error']
-                    ]);
+                    ], 200);
                 } else {
+                    $verifiableDocument->verified = 1;
+                    $verifiableDocument->save();
+
                     return response()->json([
                         'message' => 'File is valid.'
-                    ], 201);
+                    ], 200);
                 }
             }
         } else {

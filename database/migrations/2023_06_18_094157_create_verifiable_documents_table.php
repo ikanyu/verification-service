@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('verifiable_documents', function (Blueprint $table) {
             $table->id();
+            $table->string('file_type');
+            $table->boolean('verified');
             $table->timestamps();
         });
     }

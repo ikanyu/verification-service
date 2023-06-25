@@ -5,7 +5,10 @@
          colors="true"
 >
     <testsuites>
-        <testsuite name="Unit">
+        <testsuite name='Tests'>
+            <directory suffix='Test.php'>./tests*</directory>
+        </testsuite>
+        <!-- <testsuite name="Unit">
             <directory suffix="Test.php">./tests/Unit</directory>
         </testsuite>
         <testsuite name="Feature">
@@ -17,6 +20,12 @@
         <testsuite name="Validator">
             <directory suffix="Test.php">./tests/Validators</directory>
         </testsuite>
+        <testsuite name="Controller">
+            <directory suffix="Test.php"><div class=""/>
+            <tests/>
+            <Controllers/>
+            <Api></Api></directory>
+        </testsuite> -->
     </testsuites>
     <source>
         <include>
@@ -27,7 +36,7 @@
         <env name="APP_ENV" value="testing"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="CACHE_DRIVER" value="array"/>
-        <env name="DB_DATABASE" value="testing"/>
+        <!-- <env name="DB_DATABASE" value="testing"/> -->
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
