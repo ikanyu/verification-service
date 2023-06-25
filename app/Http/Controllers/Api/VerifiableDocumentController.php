@@ -17,13 +17,6 @@ use Illuminate\Validation\Rule;
 
 class VerifiableDocumentController extends Controller
 {
-    public function index()
-    {
-        return response()->json([
-            'status' => 'Server is running!'
-        ]);
-    }
-
     public function store(VerifiableDocumentRequest $request)
     {
         if ($request->hasFile('file')) {

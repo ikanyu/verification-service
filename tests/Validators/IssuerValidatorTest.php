@@ -87,6 +87,23 @@ class IssuerValidatorTest extends TestCase
     );
   }
 
+  public function test_that_dns_server_error_return_error(): void
+  {
+    Http::fake([
+      'dns.google/*' => Http::response('{"Status": 0}', 404, []),
+    ]);
+
+    $data = $this->data;
+    $data['issuer']['identityProof']['location'] = 'abc';
+
+    $response = $this->validator->validate($data);
+
+    $this->assertEquals(
+      "There is an issue with Google DNS.",
+      $response->errors()->get('issuer.identityProof')[0]
+    );
+  }
+
   public function test_that_invalid_issuer_identity_proof_rule_return_error(): void
   {
     $data = $this->data;
