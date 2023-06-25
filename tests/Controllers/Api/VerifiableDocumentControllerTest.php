@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Controllers;
+namespace Tests\Api\Controllers;
 
 use App\Http\Controllers\Api\VerifiableDocumentController;
 use Illuminate\Http\Response;
