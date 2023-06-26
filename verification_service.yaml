@@ -14,10 +14,9 @@ paths:
       tags:
         - verifiable_documents
       summary: Verify a document
-      operationId: addInventory
       responses:
         '200':
-          description: File is valid
+          description: File is verified
           content:
             application/json:
               examples:
