@@ -1,4 +1,6 @@
 openapi: 3.0.0
+servers:
+  - url: http://localhost:3001/
 info:
   description: This is a API documentation for verification_service
   version: "1.0.0"
@@ -7,7 +9,7 @@ tags:
   - name: verifiable_documents
     description: Verifiable Document Calls
 paths:
-  /verifiable_documents:
+  /api/verifiable_documents:
     post:
       tags:
         - verifiable_documents

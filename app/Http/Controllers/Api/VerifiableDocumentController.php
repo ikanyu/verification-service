@@ -2,18 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-// use App\Validators\SignatureValidator;
 use App\Models\VerifiableDocument;
-use Debugbar;
 use App\Http\Controllers\Controller;
-// use App\Validators\RecipientValidator;
-// use App\Validators\IssuerValidator;
+
 use App\Http\Requests\VerifiableDocumentRequest;
 use App\Services\DocumentService;
-
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 
 class VerifiableDocumentController extends Controller
 {
