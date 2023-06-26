@@ -20,7 +20,7 @@ You can install the dependencies using the command given below. And you're ready
 
 To view the API documentation, it's available at the file called `verification_service.yaml`. You can either install VSCode extension called [Swagger Viewer](https://marketplace.visualstudio.com/items?itemName=Arjun.swagger-viewer) to preview the documentation or chrome extension called [swagger-viewer](https://chrome.google.com/webstore/detail/swagger-viewer/nfmkaonpdmaglhjjlggfhlndofdldfag) to view it directly on github (Extension currently not usable due to the updates on Github interface).
 
-And you will be able to test out the API endpoints as below by uploading your file
+And you will be able to test out the API endpoints as below by uploading your file. There's a copy of the sample JSON file retrieved from the assessment page in `public/sample.json` which you can use it for testing out the API endpoints.
 
 ![img](public/readme_image.png)
 
